@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 头部组件 -->
-    <header/>
+    <Header/>
 
     <!-- 内容占位组件 -->
     <nuxt />
@@ -13,14 +13,14 @@
 
 <script>
 // 导入头部组件
-import header from '@/components/header'
+import Header from '@/components/header'
 
 // 导入尾部组件
 import Footer from '@/components/footer'
 export default {
   //注册组件
   components: {
-    header,
+    Header,
     Footer
   }
 }
