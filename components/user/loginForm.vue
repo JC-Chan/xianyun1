@@ -53,12 +53,23 @@ export default {
       this.$refs["form"].validate(valid => {
         //为 true 表示没有错误
         if (valid) {
-          this.$axios({
-            url: "/accounts/login",
-            method: "POST",
-            data: this.form
-          }).then(res => {
-            console.log(res.data);
+          //   this.$axios({
+          //     url: "/accounts/login",
+          //     method: "POST",
+          //     data: this.form
+          //   }).then(res => {
+          //     console.log(res.data);
+          //   });
+          this.$store.dispatch("user/login", this.form).then(res => {
+            //成功提示
+            this.$message({
+              message: "登录成功,正在跳转",
+              type: "success"
+            });
+            //跳转到首页
+            setTimeout(() => {
+              this.$router.replace("/");
+            }, 1000);
           });
         }
       });
