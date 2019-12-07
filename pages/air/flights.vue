@@ -7,7 +7,7 @@
         <div></div>
 
         <!-- 航班头部布局 -->
-        <div></div>
+        <FlightsListHead />
 
         <!-- 航班信息 -->
         <div></div>
@@ -22,11 +22,14 @@
 </template>
 
 <script>
-import moment from "moment";
+import FlightsListHead from "@/components/air/flightsListHead";
 
 export default {
   data() {
     return {};
+  },
+  components: {
+    FlightsListHead
   }
 };
 </script>
