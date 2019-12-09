@@ -4,27 +4,27 @@
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
-          <span>{{data.airline_name}}</span>
-          {{data.flight_no}}
+          <span>{{flight.airline_name}}</span>
+          {{flight.flight_no}}
         </el-col>
         <el-col :span="12">
           <el-row type="flex" justify="space-between" class="flight-info-center">
             <el-col :span="8" class="flight-airport">
-              <strong>{{data.dep_time}}</strong>
-              <span>{{data.org_airport_name}}{{data.org_airport_quay}}</span>
+              <strong>{{flight.dep_time}}</strong>
+              <span>{{flight.org_airport_name + flight.org_airport_quay}}</span>
             </el-col>
             <el-col :span="8" class="flight-time">
-              <span>2时20分</span>
+              <span>{{duration}}</span>
             </el-col>
             <el-col :span="8" class="flight-airport">
-              <strong>{{data.arr_time}}</strong>
-              <span>{{data.dst_airport_name}}{{data.dst_airport_quay}}</span>
+              <strong>{{flight.arr_time}}</strong>
+              <span>{{flight.dst_airport_name + flight.dst_airport_quay}}</span>
             </el-col>
           </el-row>
         </el-col>
         <el-col :span="6" class="flight-info-right">
           ￥
-          <span class="sell-price">{{data.seat_infos[0].org_settle_price_child}}</span>起
+          <span class="sell-price">{{flight.base_price}}</span>起
         </el-col>
       </el-row>
     </div>
@@ -39,13 +39,13 @@
             align="middle"
             class="flight-sell"
             :key="index"
-            v-for="(item,index) in data.seat_infos"
+            v-for="(item,index) in flight.seat_infos"
           >
             <el-col :span="16" class="flight-sell-left">
               <span>{{item.name}}</span>
               | {{item.supplierName}}
             </el-col>
-            <el-col :span="5" class="price">￥{{item.org_settle_price}}</el-col>
+            <el-col :span="5" class="price">￥{{item.settle_price_coupon}}</el-col>
             <el-col :span="3" class="choose-button">
               <el-button type="warning" size="mini">选定</el-button>
               <p>剩余：{{item.discount}}</p>
@@ -59,12 +59,37 @@
 
 <script>
 export default {
-  props: {
-    //数据
-    data: {
-      type: Object,
-      //默认是空数组
-      default: {}
+  // props: {
+  //   //数据
+  //   data: {
+  //     type: Object,
+  //     //默认是空数组
+  //     default: {}
+  //   }
+  // },
+  props: ["flight"],
+  computed: {
+    duration() {
+      //我们在这里计算航班飞行时间
+      //我们可以直接在接口获取日期和时间的字符串
+      //格式是:2019-12-13 00:20:00
+      //可以直接作为参数创建一个日期对象
+      //var date = new Date('2019-12-13 00:20:00')
+      //时间戳 = date.getTime()
+      var arr_timestamp = new Date(this.flight.arr_datetime).getTime();
+      var dep_timestamp = new Date(this.flight.dep_datetime).getTime();
+      var duration = arr_timestamp - dep_timestamp;
+
+      //这里处理跨过凌晨的飞行航班问题
+      if (duration < 0) {
+        //跨过了凌晨,那么到达时间应该加上一天的毫秒数
+        var msOfDay = 24 * 60 * 60 * 1000;
+        duration = arr_timestamp + msOfDay - dep_timestamp;
+      }
+      var durationMinutes = duration / 1000 / 60;
+      var hours = Math.floor(durationMinutes / 60);
+      var minutes = durationMinutes % 60;
+      return hours + "小时" + minutes + "分钟";
     }
   }
 };
